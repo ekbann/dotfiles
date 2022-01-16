@@ -5,6 +5,15 @@
 "
 " This config file should be saved in ~/.config/nvim/init.vim
 
+" plugins
+let need_to_install_plugins = 0
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    let need_to_install_plugins = 1
+endif
+
 set nocompatible            " disable compatibility to old-time vi
 set showmatch               " show matching 
 set ignorecase              " case insensitive 
@@ -27,46 +36,86 @@ set ttyfast                 " Speed up scrolling in Vim
 " set noswapfile            " disable creating swap file
 " set backupdir=~/.cache/vim " Directory to store backup files.
 
-filetype plugin indent on   "allow auto-indenting depending on file type
-syntax on                   " syntax highlighting
+" always show the status bar
+set laststatus=2
 
 " Plugins:
 "
 " run PlugInstall in command mode to install the above plugins.
 " run PlugUpdate when you want to update the plugins.
 "
-
-call plug#begin("~/.vim/plugged")
 " Plugin Section
+call plug#begin("~/.vim/plugged")
+
+" Sensuble defaults
+Plug 'tpope/vim-sensible'
+
 " Dracula — a really good theme for neovim - causes FONT/COLOR problems
 "Plug 'dracula/vim'
+
 " ultisnips — snippets engine
 "   Plug 'SirVer/ultisnips'
+
 " vim-snippets — a collection of snippets
 "   Plug 'honza/vim-snippets'
+
 " nerdtree — a file explorer for neovim(netrw comes as default for neovim)
 Plug 'preservim/nerdtree'
+
+" Tabs
+Plug 'jistr/vim-nerdtree-tabs'
+
+" Tabs
+Plug 'ap/vim-buftabline'
+
 " nerdcommenter — an easy way for commenting out lines
 Plug 'preservim/nerdcommenter'
+
 " vim-startify — a really handy start page with lots of customizations
 "   Plug 'mhinz/vim-startify'
+
 " coc — a fast code completion engine (Intellisense engine)
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 " itchyny/lightline - a minimalistic status line
 Plug 'itchyny/lightline.vim'
+
 " sheerun/vim-polyglot - better syntax-highlighting for filetypes in vim
 Plug 'sheerun/vim-polyglot'
+
 " tpope/vim-fugitive - Git integration
 Plug 'tpope/vim-fugitive'
+
 " jiangmiao/auto-pairs - auto-close braces and scopes
 Plug 'jiangmiao/auto-pairs'
+
 " kien/ctrlp.vim - a fuzzy file finder
 Plug 'kien/ctrlp.vim'
+
 " tmhedberg/matchit - switch to the begining and the end of a block by pressing %
 Plug 'tmhedberg/matchit'
+
 " lambdalisue/battery.vim - a statusline or tabline component for Neovim/Vim
 Plug 'lambdalisue/battery.vim'
+
+" git indicator in editor
+Plug 'airblade/vim-gitgutter'
+
+" neovim language things
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'neovim/nvim-lspconfig'
+
 call plug#end()
+
+filetype plugin indent on   "allow auto-indenting depending on file type
+syntax on                   " syntax highlighting
+
+if need_to_install_plugins == 1
+    echo "Installing plugins..."
+    silent! PlugInstall
+    echo "Done!"
+    q
+endif
 
 set noshowmode		    " remove (--INSERT--) edit mode because already included with lightline
 let g:lightline = {'colorscheme': '16color'}
@@ -86,7 +135,6 @@ let NERDTreeShowHidden=1 " Show hidden files in NerdTree buffer.
 " NerdTree trigger and showing hidden files.
 map <C-n> :NERDTreeToggle<CR>
 "
-"
 " alternatives:
 "nnoremap <Leader>f :NERDTreeToggle<Enter>
 " open NerdTree on file we're editing to perform operations on it with NERDTreeFind
@@ -94,12 +142,6 @@ map <C-n> :NERDTreeToggle<CR>
 
 let g:battery#update_tabline = 1    " For tabline.
 "let g:battery#update_statusline = 1 " For statusline.
-
-"Reduces the space occupied by section z
-"let g:airline_section_z = "%3p%% L:%l/%L C:%c"
-"let g:airline_section_z = "%p%% : \ue0a1:%l/%L: Col:%c"
-
-"colorscheme dracula
 
 " open new split panes to right and below
 set splitright
@@ -135,6 +177,12 @@ vnoremap <A-k> :m '<-2<CR>gv=gv
 :inoremap kj <Esc>
 :vnoremap jk <Esc>
 :vnoremap kj <Esc>
+
+" copy, cut and paste
+vmap <C-c> "+y
+vmap <C-x> "+c
+vmap <C-v> c<ESC>"+p
+imap <C-v> <ESC>"+pa
 
 " open file in a text by placing text and gf
 nnoremap gf :vert winc f<cr>
